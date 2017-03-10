@@ -1,0 +1,146 @@
+/*设置播放器整体布局*/
+#id-div-player {
+    width: 414px;
+    height: 736px;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    position: relative;
+}
+/*分别设置背景图和胶片图*/
+#id-img-background {
+    margin-top: 15%;
+    width: 100%;
+    filter: opacity(0.7) blur(1px);
+}
+
+#id-img-player {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    border: 5px rgba(255, 255, 255, 0.8) solid;
+    border-radius: 50%;
+}
+/*设置动画，播放时胶片图旋转，默认暂停*/
+.img-rolling {
+    animation: rotate360 20s infinite linear;
+    animation-play-state: paused;
+}
+@keyframes rotate360 {
+    from {
+        transform: translateX(-50%) rotate(0deg);
+    }
+    to {
+        transform: translateX(-50%) rotate(360deg);
+    }
+}
+/*设置所有图标按钮的通用属性*/
+.fa {
+    color: white;
+    font-size: 150%;
+}
+/*设置上方的两个按钮位置*/
+.fa-list-ul {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+.fa-cog {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+/*设置 songlist，默认没有active*/
+#id-div-songslist {
+    position: absolute;
+    z-index: 1000;
+    top: 60px;
+    height: 640px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    width: 100%;
+}
+.songslist {
+    display: none;
+}
+.songslist-active {
+    display: block;
+}
+/*设置歌曲栏中的 song */
+.songslist-song {
+    font-size: 100%;
+    font-family: sans-serif;
+    padding: 10px 20px;
+    border-bottom: 1px solid grey;
+}
+/*歌曲时间及歌名的展示效果*/
+currenttime, alltime, songname, input{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+currenttime {
+    top: 490px;
+    font-size: 200%;
+    font-family: serif;
+    color: rgba(255, 255, 255, 1);
+}
+alltime {
+    top: 530px;
+    font-size: 150%;
+    font-family: serif;
+    color: rgba(255, 255, 255, 0.7);
+}
+songname {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    top: 600px;
+    font-size: 150%;
+    font-family: cursive;
+    color: rgba(255, 255, 255, 1);
+}
+/*滚动条*/
+input[type=range] {
+    top: 570px;
+    width: 80%;
+    border-radius: 10px;
+}
+
+/*设置Controller在下方*/
+#id-div-controller {
+    position: absolute;
+    bottom: 60px;
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+/*设置Controller中按钮的共同特性*/
+#id-div-controller i {
+    position: absolute;
+    transform: translateX(-50%);
+}
+/*设置Controller中的五个按钮的位置*/
+.fa-retweet {
+    left: 10%;
+}
+.fa-backward {
+    left: 30%;
+}
+.fa-play, .fa-pause {
+    left:50%;
+}
+.fa-forward {
+    left: 70%;
+}
+.fa-random {
+    left: 90%;
+}
+/*设置按钮点击时或点击后的效果*/
+.controller-active {
+    color: #ff6700;
+}
+.fa-backward:active, .fa-forward:active {
+    color: #ff6700;
+}
