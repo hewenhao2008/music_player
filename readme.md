@@ -1,1 +1,1 @@
-![image](https://github.com/peili0413/GitHub/blob/master/music_player/music_player.png)
+![image]('https://github.com/peili0413/music_player/blob/master/music_player.png')
