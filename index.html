@@ -3,25 +3,27 @@
     <head>
         <meta charset="utf-8">
         <title>Music_player</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet">
         <link rel="stylesheet" href="music_player.css">
     </head>
     <body>
         <div id="id-div-player">
-            <audio src="Intro - intro.mp3" data-songs=5 data-active=0></audio>
+            <audio src="" data-songs="" data-active=""></audio>
 
             <i class="fa fa-list-ul"></i>
             <i class="fa fa-cog"></i>
 
-            <img id="id-img-background" src="Intro - intro.jpg" alt="" />
-            <img id="id-img-player" class="" src="Intro - intro.jpg" alt="" />
+            <img id="id-img-background" src="" alt="" />
+            <img id="id-img-player" src="" alt="" />
 
-            <div id="id-div-songslist" class="songslist"></div>
+            <div id="id-div-songslist" class="songslist slideOutLeft animated"></div>
 
             <currenttime></currenttime>
             <alltime></alltime>
             <songname></songname>
-            <input type="range">
+
+            <input type="range" value="0" min="0">
 
             <div id="id-div-controller">
                 <i class="fa fa-retweet"></i>

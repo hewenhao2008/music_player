@@ -5,6 +5,7 @@
     margin: 0 auto;
     background-color: rgba(0, 0, 0, 0.8);
     position: relative;
+    overflow: hidden;
 }
 /*分别设置背景图和胶片图*/
 #id-img-background {
@@ -24,7 +25,7 @@
 }
 /*设置动画，播放时胶片图旋转，默认暂停*/
 .img-rolling {
-    animation: rotate360 20s infinite linear;
+    animation: rotate360 30s infinite linear;
     animation-play-state: paused;
 }
 @keyframes rotate360 {
@@ -60,12 +61,6 @@
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
     width: 100%;
-}
-.songslist {
-    display: none;
-}
-.songslist-active {
-    display: block;
 }
 /*设置歌曲栏中的 song */
 .songslist-song {

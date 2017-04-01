@@ -9,97 +9,6 @@ const log = function() {
     console.log.apply(console, arguments)
 }
 
-// 根据全局变量 songsList 生成歌曲列表并插入页面中
-const loadSongsList = function(songsList) {
-    var list = e('#id-div-songslist')
-    for (var i = 0; i < songsList.length; i++) {
-        var song = songsList[i]
-        var t = `<div class='songslist-song'>${song}</div>`
-        list.insertAdjacentHTML('beforeend', t)
-    }
-}
-
-// n 为 int，意为播放前进方向的第 n 首，支持负数和 0
-const playSong = function(songsList, n) {
-    var audio = e('audio')
-    var len = songsList.length
-    var index = Number(e('audio').dataset.active)
-    // 根据 retweet 和 random 的状态得到 newIndex
-    if (e('.fa-random').classList.contains('controller-active')) {
-        var newIndex = Math.floor(Math.random() * len)
-    } else {
-        var newIndex = (n + len + index) % len
-    }
-    // 更新 data-active
-    audio.dataset.active = newIndex
-    // 设置 src，重置动画，并开始播放
-    audio.src = songsList[newIndex]
-    e('#id-img-player').classList.remove('img-rolling')
-    audio.play()
-}
-
-// 监听 click 事件到 songslist
-const bindEventClickSongslist = function(songsList) {
-    // 使用事件委托
-    e('#id-div-songslist').addEventListener('click', function(event) {
-        var target = event.target
-        // 确保只响应歌曲部分的 click
-        if (target.classList.contains('songslist-song')) {
-            // 求出点击的歌曲在 songslist 中的 index 与当前 active 的差值
-            var index = songsList.indexOf(target.innerHTML)
-            var activedIndex = e('audio').dataset.active
-            var n = index - activedIndex
-
-            playSong(songsList, n)
-        }
-    })
-}
-
-// 点击 play 或 pause 按钮时的响应函数
-const playOrPause = function(list) {
-    var condition = list.contains('fa-play')
-    var audio = e('audio')
-
-    if (condition) {
-        audio.play()
-    } else {
-        audio.pause()
-        list.remove('fa-pause')
-        list.add('fa-play')
-    }
-}
-// 监听 click 事件到各个按钮
-const bindEventClickButtons = function(songsList) {
-    // 使用事件委托
-    e('#id-div-player').addEventListener('click', function(event) {
-        var list = event.target.classList
-        // list-ul 按钮
-        if (list.contains('fa-list-ul')) {
-            e('#id-div-songslist').classList.toggle('songslist-active')
-        }
-        // retweet 按钮
-        else if (list.contains('fa-retweet')) {
-            list.toggle('controller-active')
-        }
-        // play 按钮
-        else if (list.contains('fa-play') || list.contains('fa-pause')) {
-            playOrPause(list)
-        }
-        // backward 按钮
-        else if (list.contains('fa-backward')) {
-            playSong(songsList, -1)
-        }
-        // forward 按钮
-        else if (list.contains('fa-forward')) {
-            playSong(songsList, 1)
-        }
-        // random 按钮
-        else if (list.contains('fa-random')) {
-            list.toggle('controller-active')
-        }
-    })
-}
-
 // 格式化时间的显示
 const templatedTime = function(n) {
     var s = String(Math.floor(n % 60))
@@ -114,34 +23,161 @@ const templatedTime = function(n) {
 
     return `${m}:${s}`
 }
+// 格式化歌曲信息的显示
+const showInfo = function(songsList) {
+    // 取出当前载入的歌曲在 songslist 中的索引
+    var index = e('audio').dataset.active
+    // 取出歌名
+    var song = songsList[index]
+    // 设置图像信息
+    e('#id-img-background').src = song.replace('.mp3', '.jpg')
+    e('#id-img-player').src = song.replace('.mp3', '.jpg')
+    // 设置歌曲时长及名称
+    e('currenttime').innerHTML = templatedTime(0)
+    e('alltime').innerHTML = templatedTime(0)
+    e('songname').innerHTML = song
+    // 将动画置于初始状态
+    e('#id-img-player').classList.remove('img-rolling')
+}
+// 返回当前的播放模式
+const modeOfPlay = function() {
+    if (e('.fa-random').classList.contains('controller-active')) {
+        return 'random'
+    } else if (e('.fa-retweet').classList.contains('controller-active')) {
+        return 'circle-list'
+    } else {
+        return 'none'
+    }
+}
+// 初始化程序
+const initialPlayer = function(songsList) {
+    // 设置 audio 的各个属性值
+    var a = e('audio')
+    var len = songsList.length
+    a.src = songsList[0]
+    a.dataset.songs = len
+    a.dataset.active = 0
+    // 初始化歌曲列表
+    var list = e('#id-div-songslist')
+    for (var i = 0; i < len; i++) {
+        var song = songsList[i]
+        var t = `<div class='songslist-song'>${song}</div>`
+        list.insertAdjacentHTML('beforeend', t)
+    }
+    // 展示歌曲信息
+    showInfo(songsList)
+}
+
+// 歌曲切换时调用的函数 playSong
+const playSong = function(songsList, index, playmode = 'none') {
+    /*
+    index 为 int，表示即将播放的歌曲在 songsList 中的索引
+    playmode 为 string，有 none circle-list circle-one random 四种取值
+    */
+    var a = e('audio')
+    var n = Number(a.dataset.songs)
+    if (playmode === 'random') {
+        var i = Math.floor(Math.random() * n)
+    } else {
+        var i = ((index % n) + n ) % n
+    }
+    a.dataset.active = i
+    // 根据 retweet 和 random 的状态得到 playmode 的值
+    // if (e('.fa-random').classList.contains('controller-active')) {
+    //     var newActive = Math.floor(Math.random() * len)
+    // } else {
+    //     var newActive = (n + len + index) % len
+    // }
+    // 更新 data-active，并展示歌曲信息
+    showInfo(songsList)
+    // 设置 audio，开始播放
+    a.src = songsList[i]
+    a.play()
+}
+
+// 监听 click 事件到 songslist
+const bindEventClickSongslist = function(songsList) {
+    // 使用事件委托
+    e('#id-div-songslist').addEventListener('click', function(event) {
+        var target = event.target
+        // 确保只响应歌曲部分的 click
+        if (target.classList.contains('songslist-song')) {
+            // 求出点击的歌曲在 songslist 中的 index
+            var index = songsList.indexOf(target.innerHTML)
+            // 调用播放函数
+            playSong(songsList, index)
+            // 隐藏 songslist
+            e('#id-div-songslist').classList.toggle('slideInLeft')
+            e('#id-div-songslist').classList.toggle('slideOutLeft')
+        }
+    })
+}
+
+// 点击 play 或 pause 按钮时的响应函数
+const playOrPause = function(list) {
+    var condition = list.contains('fa-play')
+    var a = e('audio')
+
+    if (condition) {
+        a.play()
+    } else {
+        a.pause()
+        list.remove('fa-pause')
+        list.add('fa-play')
+    }
+}
+// 监听 click 事件到各个按钮
+const bindEventClickButtons = function(songsList) {
+    // 使用事件委托
+    e('#id-div-player').addEventListener('click', function(event) {
+        var index = Number(e('audio').dataset.active)
+        var list = event.target.classList
+        // list-ul 按钮
+        if (list.contains('fa-list-ul')) {
+            e('#id-div-songslist').classList.toggle('slideInLeft')
+            e('#id-div-songslist').classList.toggle('slideOutLeft')
+        }
+        // retweet 按钮
+        else if (list.contains('fa-retweet')) {
+            list.toggle('controller-active')
+        }
+        // play 按钮
+        else if (list.contains('fa-play') || list.contains('fa-pause')) {
+            playOrPause(list)
+        }
+        // backward 按钮
+        else if (list.contains('fa-backward')) {
+            playSong(songsList, index - 1, modeOfPlay())
+        }
+        // forward 按钮
+        else if (list.contains('fa-forward')) {
+            playSong(songsList, index + 1, modeOfPlay())
+        }
+        // random 按钮
+        else if (list.contains('fa-random')) {
+            list.toggle('controller-active')
+        }
+    })
+}
+
 // 监听 canplay 事件到 audio
 const bindEventCanplay = function(songsList) {
-    var audio = e('audio')
-    audio.addEventListener('canplay', function() {
-        var index = Number(audio.dataset.active)
-        var song = songsList[index]
-        //切换图像到当前src
-        e('#id-img-background').src = song.replace('.mp3', '.jpg')
-        e('#id-img-player').src = song.replace('.mp3', '.jpg')
-        //切换歌曲信息到当前src
-        e('currenttime').innerHTML = templatedTime(0)
-        e('alltime').innerHTML = templatedTime(audio.duration)
-        e('songname').innerHTML = song
+    var a = e('audio')
+    a.addEventListener('canplay', function() {
+        // 设置歌曲时长信息
+        e('alltime').innerHTML = templatedTime(a.duration)
         // 设置滚动条信息
-        e('input').min = 0
-        e('input').max = audio.duration
-        e('input').step = 0.1
-        e('input').defaultValue = 0
+        e('input').max = a.duration
     })
 }
 // 监听 play 事件到 audio
 const bindEventPlay = function() {
-    var audio = e('audio')
-    audio.addEventListener('play', function() {
+    var a = e('audio')
+    a.addEventListener('play', function() {
         // 歌曲当前时间变化，和滚动条变化
         setInterval(function() {
-            e('currenttime').innerHTML = templatedTime(audio.currentTime)
-            e('input').value = audio.currentTime
+            e('currenttime').innerHTML = templatedTime(a.currentTime)
+            e('input').value = a.currentTime
         }, 1000)
         //切换播放按钮形状
         e('#id-i-play').classList.remove('fa-play')
@@ -159,15 +195,17 @@ const bindEventPause = function() {
 }
 // 监听 ended 事件到 audio
 const bindEventEnded = function(songsList) {
-    e('audio').addEventListener('ended', function() {
+    var a = e('audio')
+    a.addEventListener('ended', function() {
         // 检查是否是最后一曲
-        var condition1 = e('audio').dataset.active == songsList.length - 1
+        var condition1 = a.dataset.active == songsList.length - 1
         // 检查是否激活了 retweet 按钮
         var condition2 = e('.fa-retweet').classList.contains('controller-active')
         if (condition1 && !condition2) {
             null
         } else {
-            playSong(songsList, 1)
+            var index = Number(a.dataset.active)
+            playSong(songsList, index + 1, modeOfPlay())
         }
     })
 }
@@ -194,13 +232,13 @@ const bindEventAudio = function(songsList) {
 const __main = function() {
     // 存储歌曲名称到数组
     const songsList = [
-        `Intro - intro.mp3`,
-        `I'd Love To Change The World (Matstubs Remix).mp3`,
         `I Don't Want To Set The World On Fire.mp3`,
         `镇命歌.mp3`,
+        `I'd Love To Change The World (Matstubs Remix).mp3`,
+        `Intro - intro.mp3`,
         `月光石.mp3`,
     ]
-    loadSongsList(songsList)
+    initialPlayer(songsList)
     bindEventClickSongslist(songsList)
     bindEventClickButtons(songsList)
     bindEventAudio(songsList)
