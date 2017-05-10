@@ -21,7 +21,7 @@ const templatedTime = function(n) {
         m = '0' + m
     }
 
-    return `${m}:${s}`
+    return m + ":" + s
 }
 // 格式化歌曲信息的显示
 const showInfo = function(songsList) {
@@ -63,7 +63,7 @@ const initialPlayer = function(songsList) {
     for (var i = 0; i < len; i++) {
          //去除.mp3后缀的显示
         var song = songsList[i].replace('.mp3','')
-        var t = `<div class='songslist-song'>${song}</div>`
+        var t = "<div class='songslist-song'>" +song + '</div>'
         list.insertAdjacentHTML('beforeend', t)
     }
     // 展示歌曲信息
@@ -237,11 +237,11 @@ const bindEventAudio = function(songsList) {
 const __main = function() {
     // 存储歌曲名称到数组
     const songsList = [
-        `I Don't Want To Set The World On Fire.mp3`,
-        `镇命歌.mp3`,
-        `I'd Love To Change The World (Matstubs Remix).mp3`,
-        `Intro - intro.mp3`,
-        `月光石.mp3`,
+        'I Don\'t Want To Set The World On Fire.mp3',
+        '镇命歌.mp3',
+        'I\'d Love To Change The World (Matstubs Remix).mp3',
+        'Intro - intro.mp3',
+        '月光石.mp3',
     ]
     initialPlayer(songsList)
     bindEventClickSongslist(songsList)
