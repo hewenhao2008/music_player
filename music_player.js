@@ -66,6 +66,9 @@ const initialPlayer = function(songsList) {
     }
     // 展示歌曲信息
     showInfo(songsList)
+        //显示播放列表
+       e('#id-div-songslist').classList.toggle('slideOutLeft')
+       e('#id-div-songslist').classList.toggle('slideInLeft')
 }
 
 // 歌曲切换时调用的函数 playSong
