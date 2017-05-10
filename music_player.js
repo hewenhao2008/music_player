@@ -35,7 +35,8 @@ const showInfo = function(songsList) {
     // 设置歌曲时长及名称
     e('currenttime').innerHTML = templatedTime(0)
     e('alltime').innerHTML = templatedTime(0)
-    e('songname').innerHTML = song
+    //去除.mp3后缀的显示
+    e('songname').innerHTML = song.replace('.mp3','')
     // 将动画置于初始状态
     e('#id-img-player').classList.remove('img-rolling')
 }
@@ -60,7 +61,8 @@ const initialPlayer = function(songsList) {
     // 初始化歌曲列表
     var list = e('#id-div-songslist')
     for (var i = 0; i < len; i++) {
-        var song = songsList[i]
+         //去除.mp3后缀的显示
+        var song = songsList[i].replace('.mp3','')
         var t = `<div class='songslist-song'>${song}</div>`
         list.insertAdjacentHTML('beforeend', t)
     }
@@ -105,8 +107,8 @@ const bindEventClickSongslist = function(songsList) {
         var target = event.target
         // 确保只响应歌曲部分的 click
         if (target.classList.contains('songslist-song')) {
-            // 求出点击的歌曲在 songslist 中的 index
-            var index = songsList.indexOf(target.innerHTML)
+            // 求出点击的歌曲在 songslist 中的 index //加回.mp3后缀
+            var index = songsList.indexOf(target.innerHTML + ".mp3")
             // 调用播放函数
             playSong(songsList, index)
             // 隐藏 songslist
